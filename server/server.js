@@ -42,7 +42,6 @@ app.get('/', async (req, res) => {
     console.log(err);
     res.senderror(err);
   }
-  
 })
 
 
