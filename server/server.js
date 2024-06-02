@@ -1,7 +1,10 @@
 const colors = require('colors');
 const sqlite3 = require('sqlite3').verbose();
+const express = require('express');
 
 let sql;
+
+const app = express();
 
 // connect to DB
 const db = new sqlite3.Database('./database/data.db', sqlite3.OPEN_READWRITE, (err) => {
@@ -9,42 +12,45 @@ const db = new sqlite3.Database('./database/data.db', sqlite3.OPEN_READWRITE, (e
 });
 
 
-// Create table
-// sql = 'CREATE TABLE users(id INTEGER PRIMARY KEY, first_name, last_name, username, password, email)';
-// db.run(sql);
+//////////////
+// db stuff
 
-// Drop table
-// db.run('DROP TABLE users');
+/////////////////
+/// Middleware //
 
-// Insert data into table
-// sql = 'INSERT INTO users(first_name, last_name, username, password, email) VALUES (?,?,?,?,?)';
-// let values = [
-//   // "nike", "michaelson", "mike_user", "test", "mike@gmail.com"
-//   "fred", "fredson", "fred_user", "testtwo", "fred@gmail.com"
-// ];
-
-// db.run(sql, values, err => {
-//   if (err) return console.error(err.message);
-// });
-
-// update data
-// sql = 'UPDATE users SET first_name = ? WHERE id = ?';
-// db.run(sql, ['mike', 2], (err) => {
-//   if (err) return console.error(err.message);
-// })
-
-// delete data
-// sql = 'DELETE FROM users WHERE id = ?';
-// db.run(sql, [2], (err) => {
-//   if (err) return console.error(err.message);
-// })
-
-// Query the data
-// Log whole table to the console
-sql = 'SELECT * FROM users';
-db.all(sql, [], (err, rows) => {
-  if (err) return console.error(err.message.red);
-    rows.forEach(row => {
-      console.log(row);
+function getUsers() {
+  return new Promise((resolve) => {
+    db.all(sql, [], (err, rows) => {
+      if (err) resolve(err.message.red);
+      resolve(rows); 
     });
-});
+  });
+}
+
+
+// Mount Routers
+app.get('/', async (req, res) => {
+  try {
+    sql = 'SELECT * FROM users';
+  
+    let data = await getUsers();
+
+    console.log(data);
+    res.send(data);
+
+  } catch(err){
+    console.log(err);
+    res.senderror(err);
+  }
+  
+})
+
+
+///////////
+/// run the server
+server = app.listen(
+  5000,
+  (() => {
+    console.log('Server running on port 5000');
+  })
+);
