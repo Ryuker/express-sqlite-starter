@@ -1,4 +1,5 @@
 # Notes
+[Explanation](https://www.sqlitetutorial.net/sqlite-nodejs/insert/)
 
 # DB Stuff for use in server.js
 ```JS

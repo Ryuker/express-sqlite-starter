@@ -48,6 +48,35 @@ function getUserById(id) {
   });
 }
 
+function addUser(body) {
+  const {
+    first_name,
+    last_name,
+    username,
+    password,
+    email,
+  } = body;
+  
+  // TODO add validation
+
+  // Setup query
+  const query = `INSERT INTO users(first_name, last_name, username, password, email) VALUES (?,?,?,?,?)`;
+
+  return new Promise((resolve) => {
+    db.run(query, [
+      first_name,
+      last_name,
+      username,
+      password,
+      email,
+    ], (err) => {
+      if (err) resolve(err.message.red);
+      console.log(`Row was added to the table: ${this.id}`);
+      resolve(); 
+    });
+  });
+}
+
 
 // Mount Routers
 // Get all users from DB
@@ -81,9 +110,10 @@ app.get('/:id', asyncHandler( async (req, res, next) => {
 
 // Add single user to db
 app.post('/', asyncHandler( async (req, res, next) => {
-
-  console.log(req.body, 'post request');
-  let data = await createUser(req.body.user);
+  const bla = await addUser(req.body);
+  
+  const data = await getUsers();
+  console.log(data);
 
   // if (data.length === 0) {
   //   return next(new ErrorResponse(`Error adding user to database`, 404));
@@ -93,7 +123,7 @@ app.post('/', asyncHandler( async (req, res, next) => {
   
   res.status(200).json({
     success: true,
-    data: {}
+    data: data
   });
 }));
 
