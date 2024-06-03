@@ -23,6 +23,9 @@ const db = new sqlite3.Database('./database/data.db', sqlite3.OPEN_READWRITE, (e
 /////////////////
 /// Middleware //
 
+// Body parser middleware
+app.use(express.json());
+
 function getUsers() {
   const query = 'SELECT * FROM users';
 
@@ -73,6 +76,24 @@ app.get('/:id', asyncHandler( async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: data
+  });
+}));
+
+// Add single user to db
+app.post('/', asyncHandler( async (req, res, next) => {
+
+  console.log(req.body, 'post request');
+  let data = await createUser(req.body.user);
+
+  // if (data.length === 0) {
+  //   return next(new ErrorResponse(`Error adding user to database`, 404));
+  // }
+
+  // console.log(data);
+  
+  res.status(200).json({
+    success: true,
+    data: {}
   });
 }));
 
