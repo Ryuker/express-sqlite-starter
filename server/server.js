@@ -4,6 +4,10 @@ const express = require('express');
 
 // middleware imports
 const asyncHandler = require('./middleware/async');
+const errorHandler = require('./middleware/error');
+
+// utils
+const ErrorResponse = require('./utils/errorResponse');
 
 const app = express();
 
@@ -60,6 +64,10 @@ app.get('/:id', asyncHandler( async (req, res, next) => {
 
   let data = await getUserById(req.params.id);
 
+  if (data.length === 0) {
+    return next(new ErrorResponse(`User not found with id of ${req.params.id}`, 404));
+  }
+
   console.log(data);
   
   res.status(200).json({
@@ -67,6 +75,9 @@ app.get('/:id', asyncHandler( async (req, res, next) => {
     data: data
   });
 }));
+
+// - Error Handler
+app.use(errorHandler);
 
 
 ///////////
