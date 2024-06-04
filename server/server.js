@@ -25,6 +25,7 @@ const db = new sqlite3.Database('./database/data.db', sqlite3.OPEN_READWRITE, (e
 
 // Body parser middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 function getUsers() {
   const query = 'SELECT * FROM users';
@@ -72,6 +73,38 @@ function addUser(body) {
     ], function(err) {
       if (err) resolve(err);
       resolve(this.lastID); 
+    });
+  });
+}
+
+function updateUserById(id, body) {
+  const columns = Object.entries(body);
+
+  let columnsStr = "";
+
+  columns.map((column, index) => {
+    columnsStr += `${column[0]}= "${column[1]}"`;
+    
+    // add komma to any but the last column 
+    if (columns.length > 1){
+      if (index < columns.length -1)
+        columnsStr += ',';
+    }
+  });
+
+  // console.log(columns);
+  // console.log(columnsStr);
+
+  // Setup query
+  const query = `UPDATE users SET ${columnsStr} WHERE id = ?`;
+
+  console.log(query);
+  return new Promise((resolve) => {
+    db.run(query, [
+      id
+    ], function(err) {
+      if (err) resolve(err);
+      resolve({id: id}); 
     });
   });
 }
@@ -125,6 +158,27 @@ app.post('/', asyncHandler( async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: newUser
+  });
+}));
+
+// Update user by id
+app.put('/:id', asyncHandler( async (req, res, next) => {
+  
+  const data = await updateUserById(req.params.id, req.body);
+  
+  // check if there was an error adding to the database
+  if (data.code) {
+    console.error(data.message.red);
+    return next(new ErrorResponse('Error updating user in the database', 404));
+  }
+
+  const updatedUser = await getUserById(data.id);
+
+  console.log(updatedUser);
+  
+  res.status(200).json({
+    success: true,
+    data: updatedUser
   });
 }));
 
