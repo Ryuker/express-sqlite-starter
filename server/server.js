@@ -69,10 +69,9 @@ function addUser(body) {
       username,
       password,
       email,
-    ], (err) => {
-      if (err) resolve(err.message.red);
-      console.log(`Row was added to the table: ${this.id}`);
-      resolve(); 
+    ], function(err) {
+      if (err) resolve(err);
+      resolve(this.lastID); 
     });
   });
 }
@@ -110,20 +109,22 @@ app.get('/:id', asyncHandler( async (req, res, next) => {
 
 // Add single user to db
 app.post('/', asyncHandler( async (req, res, next) => {
-  const bla = await addUser(req.body);
   
-  const data = await getUsers();
-  console.log(data);
+  const data = await addUser(req.body);
+  
+  // check if there was an error adding to the database
+  if (data.code) {
+    console.error(data.message.red);
+    return next(new ErrorResponse('Error adding user to the database', 404));
+  }
+  
+  const newUser = {data, ...req.body};
 
-  // if (data.length === 0) {
-  //   return next(new ErrorResponse(`Error adding user to database`, 404));
-  // }
-
-  // console.log(data);
+  console.log(newUser);
   
   res.status(200).json({
     success: true,
-    data: data
+    data: newUser
   });
 }));
 
