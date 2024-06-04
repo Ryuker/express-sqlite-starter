@@ -1,5 +1,12 @@
 # Notes
-[Explanation](https://www.sqlitetutorial.net/sqlite-nodejs/insert/)
+- [Explanation](https://www.sqlitetutorial.net/sqlite-nodejs/insert/)
+
+- configuring relations
+[Explanation](https://www.sqlitetutorial.net/sqlite-foreign-key/)
+
+- How to create many to many relationships
+[Explanation](https://five.co/blog/how-to-create-many-to-many-relationships-in-sql/)
+- [another explanation](https://www.w3schools.in/mysql/many-to-many-relationship)
 
 # DB Stuff for use in server.js
 ```JS

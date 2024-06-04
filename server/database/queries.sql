@@ -9,7 +9,29 @@ CREATE TABLE users(
   last_name TEXT NOT NULL , 
   username TEXT NOT NULL , 
   password TEXT NOT NULL , 
-  email TEXT NOT NULL 
+  email TEXT NOT NULL,
+);
+
+CREATE TABLE events(
+  id INTEGER PRIMARY KEY, 
+  event_name TEXT NOT NULL, 
+  date TEXT NOT NULL , 
+  address TEXT NOT NULL , 
+  host TEXT NOT NULL , 
+);
+
+CREATE TABLE events_users(
+  event_user_id INTEGER PRIMARY KEY,
+  event_id INT,
+  user_id INT,
+  FOREIGN KEY (event_id) 
+    REFERENCES events(id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE  ,
+  FOREIGN KEY (user_id) 
+    REFERENCES users(id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE
 );
 
 
