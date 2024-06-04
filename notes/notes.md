@@ -43,3 +43,16 @@
 //     });
 // });
 ```
+
+
+
+``` JS
+{
+  "first_name": "jack",
+  "last_name": "jackson",
+  "username": "jack_user",
+  "password": "testjack",
+  "email": "jack@gmail.com"
+}
+
+```

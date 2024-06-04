@@ -44,7 +44,7 @@ function getUserById(id) {
   return new Promise((resolve) => {
     db.all(query, [], (err, rows) => {
       if (err) resolve(err.message.red);
-      resolve(rows); 
+      resolve(rows[0]); 
     });
   });
 }
@@ -92,13 +92,23 @@ function updateUserById(id, body) {
     }
   });
 
-  // console.log(columns);
-  // console.log(columnsStr);
-
   // Setup query
   const query = `UPDATE users SET ${columnsStr} WHERE id = ?`;
 
-  console.log(query);
+  return new Promise((resolve) => {
+    db.run(query, [
+      id
+    ], function(err) {
+      if (err) resolve(err);
+      resolve({id: id}); 
+    });
+  });
+}
+
+function deleteUserById(id) {
+  // Setup query
+  const query = `DELETE FROM users WHERE id = ?`;
+
   return new Promise((resolve) => {
     db.run(query, [
       id
@@ -179,6 +189,26 @@ app.put('/:id', asyncHandler( async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: updatedUser
+  });
+}));
+
+// delete user by id
+app.delete('/:id', asyncHandler( async (req, res, next) => {
+  const user = await getUserById(req.params.id);
+
+  const data = await deleteUserById(req.params.id);
+  
+  // check if there was an error adding to the database
+  if (data.code) {
+    console.error(data.message.red);
+    return next(new ErrorResponse('Error deleting user from the database', 404));
+  }
+
+  console.log(user);
+  
+  res.status(200).json({
+    success: true,
+    message: `Deleted user ${user.username} with id ${data.id}`
   });
 }));
 
