@@ -8,7 +8,7 @@ const {
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 
-
+// Specify table to reference in database
 const table = "users";
 
 // @desc    Get all users
